@@ -13,18 +13,30 @@ while True:
     if keyboard.is_pressed(startStopKey) == True:
         if isHolding == False:
             isHolding = True
-            print ("\033[A                             \033[A")
+            print("\033[A                             \033[A")
             print("🛑 Stopped" if running else "🟩 Running")
             running = not running
     else:
         isHolding = False
 
     if running:
-        location = pyautogui.locateOnScreen(
-            image="img/eye.png",
-            confidence=0.8,
-            region=[350,280,620,570]
-        )
+        image_found = False
+        location = None
+        try:
+            location = pyautogui.locateOnScreen(
+                image="img/eye.png", confidence=0.8, region=(350, 280, 620, 570)
+            )
+            image_found = True
+        except pyautogui.ImageNotFoundException:
+            try:
+                location = pyautogui.locateOnScreen(
+                    image="img/eye_normal.png",
+                    confidence=0.8,
+                    region=(350, 280, 620, 570),
+                )
+                image_found = True
+            except pyautogui.ImageNotFoundException:
+                pass
 
-        if location:
+        if image_found and location:
             pyautogui.click(location)
